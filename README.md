@@ -359,7 +359,13 @@ docker run --name zookeeper-debug -p 2182:2181 -p 10000:8080 chaimm/zookeeper-du
 - -p 2182:2181：将容器的2181端口映射到宿主机的2182端口上，该端口是ZooKeeper的端口号。
 - -p 10000:8080：将容器的8080端口映射到宿主机的10000端口上，该端口是Dubbo-Admin所在Tomcat的端口号。
 
-启动成功后，你就可以通过```你的IP:10000/dubbo-admin-2.8.4/```访问到Dubbo-Admin，如下图所示：
+镜像启动后还需要启动tomcat，否则无法访问Dubbo-Admin
+```
+docker exec -it zookeeper-debug bash
+cd /zookeeper-3.4.10/tomcat/apache-tomcat-8.5.23/bin
+./startup.sh
+```
+启动成功后，你就可以通过```你的IP:10000/dubbo-admin-2.8.4/```访问到Dubbo-Admin（默认账号root/jishimen2019）：如下图所示：
 ![title](https://leanote.com/api/file/getImage?fileId=5a1cff07ab64416ff3002053)
 
 ### 5.2 父pom文件中引入dubbo依赖
@@ -454,15 +460,15 @@ docker pull docker.io/jenkins/jenkins
 - 启动容器<br>
 由于Jenkins运行在Tomcat容器中，因此我们将容器的8080端口映射到宿主机的10080端口上：
 ```
-docker run --name jenkins -p 10080:8080 docker.io/jenkins/jenkins
+docker run --name jenkins -p 1080:8080 docker.io/jenkins/jenkins
 ```
 
 - 初始化Jenkins<br>
-然后你需要访问```IP:10080```，Jenkins会带着你进行一系列的初始化设置，你只要跟着它一步步走就行了，比较傻瓜式。
+然后你需要访问```IP:1080```，Jenkins会带着你进行一系列的初始化设置，你只要跟着它一步步走就行了，比较傻瓜式。
 
 ### 6.2 在Jenkins中创建项目
 > 接下来我们要做的是，在Jenkins中为每一个服务创建一个项目，每个项目中定义了构建的具体流程。由于我们将整个项目分成了6个微服务，所以我们需要在Jenkins中分别为这6个服务创建项目。那句开始吧～
-
+- 首先进入Jenkins插件管理页面安装Maven Integration 插件
 - 点击页面左侧的“新建”按钮：<br>
 ![title](https://leanote.com/api/file/getImage?fileId=5a1d09d6ab64416dcc00231b)
 
